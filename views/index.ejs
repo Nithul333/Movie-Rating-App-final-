@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Movies</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(to right, #141e30, #243b55);
+      color: #f1f1f1;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.8s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center px-4 py-10">
+  <div class="w-full max-w-6xl text-center fade-in">
+    <h1 class="text-5xl font-bold mb-4">🎬 RateFlix</h1>
+    <a href="/add" class="inline-block mb-8 bg-yellow-400 text-gray-900 font-semibold px-6 py-2 rounded-full hover:bg-yellow-300 transition duration-300">
+      + Add New Movie
+    </a>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-center">
+      <% moviesList.forEach(function(movie) { %>
+        <div class="bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+          <a href="/movie/<%= movie.id %>">
+            <img src="<%= movie.thumbnailImage %>" alt="Movie Poster" class="rounded-md mb-4 w-full h-60 object-cover shadow-md" />
+          </a>
+          <p class="text-xl font-semibold"><%= movie.title %></p>
+          <p class="text-gray-300"><%= movie.genre %> (<%= movie.releaseYear %>)</p>
+
+          <% 
+            if (movie.reviews && movie.reviews.length > 0) { 
+              let validRatings = movie.reviews
+                .map(r => parseFloat(r.rating))
+                .filter(r => !isNaN(r));
+
+              let avg = validRatings.length > 0 
+                ? (validRatings.reduce((a, b) => a + b, 0) / validRatings.length).toFixed(1)
+                : null;
+          %>
+            <% if (avg) { %>
+              <p class="text-sm text-yellow-300 font-medium mt-1">Avg. Rating: <%= avg %>/5</p>
+            <% } else { %>
+              <p class="text-sm text-yellow-300 font-medium mt-1">No valid ratings</p>
+            <% } %>
+          <% } else { %>
+            <p class="text-sm text-yellow-300 font-medium mt-1">No ratings yet</p>
+          <% } %>
+
+          <a href="/movie/<%= movie.id %>" class="mt-3 inline-block bg-white text-gray-900 font-medium px-4 py-1 rounded-full hover:bg-yellow-400 transition duration-300">
+            View Movie
+          </a>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</body>
+</html>
